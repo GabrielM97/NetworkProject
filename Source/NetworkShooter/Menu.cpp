@@ -139,7 +139,7 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 		
 	if( UWorld* world = GetWorld())
 	{
-		world->ServerTravel("/Game/ThirdPerson/Maps/Lobby?Listen", true);
+		world->ServerTravel("/Game/Maps/Lobby?Listen", true);
 	}
 }
 
