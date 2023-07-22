@@ -58,7 +58,7 @@ protected:
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void SetPlayerName();
+	void SetPlayerName() const;
 
 public:
 	virtual void OnRep_PlayerState() override;

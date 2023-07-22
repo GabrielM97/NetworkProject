@@ -87,13 +87,13 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ABlasterCharacter::SetPlayerName()
+void ABlasterCharacter::SetPlayerName() const
 {
 	if (UOverheadWidget* OverheadWidget = Cast<UOverheadWidget>(OverheadWidgetComponent->GetUserWidgetObject()))
 	{
 		if (const APlayerState* playerState = GetPlayerState())
 		{
-			//OverheadWidget->SetDisplayText(playerState->GetPlayerName());
+			OverheadWidget->SetDisplayText(playerState->GetPlayerName());
 		}
 	}
 }
@@ -116,7 +116,6 @@ void ABlasterCharacter::PossessedBy(AController* NewController)
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
