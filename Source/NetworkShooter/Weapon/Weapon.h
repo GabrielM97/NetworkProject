@@ -44,12 +44,22 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
 	UPickupComponent* PickupComponent;
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_WeaponOverlapped, Category="Weapon Properties")
+	bool bWeaponOverlapped;
+
+	UFUNCTION()
+	void OnRep_WeaponOverlapped();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	virtual void OnWeaponOverlapped(ABlasterCharacter* BlasterCharacter);
+	virtual void OnWeaponStartOverlapped(ABlasterCharacter* BlasterCharacter);
+	
+	UFUNCTION()
+	virtual void OnWeaponEndOverlapped(ABlasterCharacter* BlasterCharacter);
 
 public:	
 	// Called every frame

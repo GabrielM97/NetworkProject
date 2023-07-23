@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "NetworkShooter/BlasterCharacter.h"
 #include "NetworkShooter/PickupComponent.h"
 
@@ -29,19 +30,53 @@ AWeapon::AWeapon()
 	PickupComponent->SetupAttachment(RootComponent);
 }
 
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AWeapon, bWeaponOverlapped, COND_OwnerOnly);
+}
+
+void AWeapon::OnRep_WeaponOverlapped()
+{
+	PickupWidget->SetVisibility(bWeaponOverlapped);
+
+	if (!bWeaponOverlapped)
+	{
+		Owner =  nullptr;
+	}
+}
+
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PickupComponent->OnPickUp.AddDynamic(this, &AWeapon::OnWeaponOverlapped);
+	PickupComponent->OnStartOverlap.AddDynamic(this, &AWeapon::OnWeaponStartOverlapped);
+	PickupComponent->OnEndOverlap.AddDynamic(this, &AWeapon::OnWeaponEndOverlapped);
 	PickupWidget->SetVisibility(false);
-	
 }
 
-void AWeapon::OnWeaponOverlapped(ABlasterCharacter* BlasterCharacter)
+void AWeapon::OnWeaponStartOverlapped(ABlasterCharacter* BlasterCharacter)
 {
-	PickupWidget->SetVisibility(true);
+	Owner =  BlasterCharacter;
+	bWeaponOverlapped = true;
+	
+	if (BlasterCharacter->IsLocallyControlled())
+	{
+		PickupWidget->SetVisibility(bWeaponOverlapped);
+	}
+}
+
+void AWeapon::OnWeaponEndOverlapped(ABlasterCharacter* BlasterCharacter)
+{
+	bWeaponOverlapped = false;
+	
+	if (BlasterCharacter->IsLocallyControlled())
+	{
+		PickupWidget->SetVisibility(bWeaponOverlapped);
+		Owner = nullptr;
+	}
 }
 
 

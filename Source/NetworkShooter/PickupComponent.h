@@ -9,7 +9,8 @@
 
 
 class ABlasterCharacter;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUp, ABlasterCharacter*, PickUpCharacter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStartOverlap, ABlasterCharacter*, PickUpCharacter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEndOverlap, ABlasterCharacter*, PickUpCharacter);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class NETWORKSHOOTER_API UPickupComponent : public USphereComponent
@@ -21,15 +22,22 @@ public:
 	UPickupComponent();
 	
 	UPROPERTY(BlueprintAssignable, Category = "Interaction")
-	FOnPickUp OnPickUp;
+	FOnStartOverlap OnStartOverlap;
+
+	UPROPERTY(BlueprintAssignable, Category = "Interaction")
+	FOnEndOverlap OnEndOverlap;
 	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	virtual void OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
 	// Called every frame
