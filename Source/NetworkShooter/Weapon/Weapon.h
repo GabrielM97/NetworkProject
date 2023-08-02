@@ -19,8 +19,6 @@ enum class EWeaponState : uint8
 	EWS_Dropped UMETA(DisplayName = "Dropped"),
 
 	EWS_MAX  UMETA(DisplayName = "Defualt Max")
-	
-	
 };
 
 UCLASS()
@@ -61,8 +59,13 @@ protected:
 	UFUNCTION()
 	virtual void OnWeaponEndOverlapped(ABlasterCharacter* BlasterCharacter);
 
+	UFUNCTION()
+	virtual void OnWeaponPickedUp(ABlasterCharacter* BlasterCharacter);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void SetWeaponStete(EWeaponState NewWeaponState) {WeaponState = NewWeaponState;};
 
 };

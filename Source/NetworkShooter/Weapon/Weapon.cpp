@@ -8,6 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include "NetworkShooter/BlasterCharacter.h"
 #include "NetworkShooter/PickupComponent.h"
+#include "NetworkShooter/Conponents/CombatComponent.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -54,6 +55,7 @@ void AWeapon::BeginPlay()
 
 	PickupComponent->OnStartOverlap.AddDynamic(this, &AWeapon::OnWeaponStartOverlapped);
 	PickupComponent->OnEndOverlap.AddDynamic(this, &AWeapon::OnWeaponEndOverlapped);
+	PickupComponent->OnPickup.AddDynamic(this, &AWeapon::OnWeaponPickedUp);
 	PickupWidget->SetVisibility(false);
 }
 
@@ -77,6 +79,27 @@ void AWeapon::OnWeaponEndOverlapped(ABlasterCharacter* BlasterCharacter)
 		PickupWidget->SetVisibility(bWeaponOverlapped);
 		Owner = nullptr;
 	}
+	
+}
+
+void AWeapon::OnWeaponPickedUp(ABlasterCharacter* BlasterCharacter)
+{
+	if (!BlasterCharacter || !HasAuthority())
+	{
+		return;
+	}
+	
+	if (UCombatComponent* CombatComponent = BlasterCharacter->GetCombatComponent())
+	{
+		CombatComponent->EquipWeapon(this);
+		Owner = BlasterCharacter;
+		bWeaponOverlapped = false;
+		if (BlasterCharacter->IsLocallyControlled())
+		{
+			PickupWidget->SetVisibility(bWeaponOverlapped);
+		}
+	}
+	
 }
 
 
